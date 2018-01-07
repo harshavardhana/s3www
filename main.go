@@ -2,12 +2,12 @@ package main
 
 import (
 	"flag"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 
+	"github.com/minio/mc/pkg/console"
 	minio "github.com/minio/minio-go"
 )
 
@@ -59,6 +59,8 @@ var (
 	secretKey string
 	address   string
 	bucket    string
+	tlsCert   string
+	tlsKey    string
 )
 
 func init() {
@@ -66,22 +68,33 @@ func init() {
 	flag.StringVar(&accessKey, "accessKey", "", "Access key of S3 storage.")
 	flag.StringVar(&secretKey, "secretKey", "", "Secret key of S3 storage.")
 	flag.StringVar(&bucket, "bucket", "", "Bucket name which hosts static files.")
-	flag.StringVar(&address, "address", ":8080", "Bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname.")
+	flag.StringVar(&address, "address", "127.0.0.1:8080", "Bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname.")
+	flag.StringVar(&tlsCert, "ssl-cert", "", "TLS certificate for this server.")
+	flag.StringVar(&tlsKey, "ssl-key", "", "TLS private key for this server.")
 }
 
 func main() {
 	flag.Parse()
 
+	if strings.TrimSpace(bucket) == "" {
+		console.Fatalln(`Bucket name cannot be empty, please provide 's3www -bucket "mybucket"'`)
+	}
+
 	u, err := url.Parse(endpoint)
 	if err != nil {
-		log.Fatalln(err)
+		console.Fatalln(err)
 	}
 
 	client, err := minio.NewV4(u.Host, accessKey, secretKey, u.Scheme == "https")
 	if err != nil {
-		log.Fatalln(err)
+		console.Fatalln(err)
 	}
 
-	log.Println("Started listening on", address)
-	log.Fatalln(http.ListenAndServe(address, http.FileServer(&S3{client, bucket})))
+	if tlsCert != "" && tlsKey != "" {
+		console.Infof("Started listening on https://%s\n", address)
+		console.Fatalln(http.ListenAndServeTLS(address, tlsCert, tlsKey, http.FileServer(&S3{client, bucket})))
+	} else {
+		console.Infof("Started listening on http://%s\n", address)
+		console.Fatalln(http.ListenAndServe(address, http.FileServer(&S3{client, bucket})))
+	}
 }

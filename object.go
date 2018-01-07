@@ -31,25 +31,6 @@ func (h *httpMinioObject) Seek(offset int64, whence int) (int64, error) {
 }
 
 func (h *httpMinioObject) Readdir(count int) ([]os.FileInfo, error) {
-	if h.bucket == "/" {
-		buckets, err := h.client.ListBuckets()
-		if err != nil {
-			return nil, os.ErrNotExist
-		}
-		var fileInfos []os.FileInfo
-		for _, bucket := range buckets {
-			fileInfos = append(fileInfos, objectInfo{
-				ObjectInfo: minio.ObjectInfo{
-					Key:          bucket.Name,
-					LastModified: bucket.CreationDate,
-				},
-				prefix: bucket.Name,
-				isDir:  true,
-			})
-		}
-		return fileInfos, nil
-	}
-
 	// List 'N' number of objects from a bucket-name with a matching prefix.
 	listObjectsN := func(bucket, prefix string, recursive bool, N int) (objsInfo []minio.ObjectInfo, err error) {
 		// Create a done channel to control 'ListObjects' go routine.

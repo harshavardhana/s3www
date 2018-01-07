@@ -3,10 +3,37 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "U3c1xAnpa/oQtfsCx4lLEX5vDbs=",
+			"origin": "github.com/minio/mc/vendor/github.com/fatih/color",
+			"path": "github.com/fatih/color",
+			"revision": "9da492975c53f3e0d56aa58934ac5d692a705b8c",
+			"revisionTime": "2018-01-05T22:18:35Z"
+		},
+		{
 			"checksumSHA1": "jK0knSGdB7hA/Pvc0mQBYkYxN/8=",
 			"path": "github.com/go-ini/ini",
 			"revision": "32e4c1e6bc4e7d0d8451aa6b75200d19e37a536a",
 			"revisionTime": "2017-11-19T05:34:21Z"
+		},
+		{
+			"checksumSHA1": "7x2UfEAwyq5ouD4/noloWuIR/YI=",
+			"origin": "github.com/minio/mc/vendor/github.com/mattn/go-colorable",
+			"path": "github.com/mattn/go-colorable",
+			"revision": "9da492975c53f3e0d56aa58934ac5d692a705b8c",
+			"revisionTime": "2018-01-05T22:18:35Z"
+		},
+		{
+			"checksumSHA1": "NkbetqlpWBi3gP08JDneC+axTKw=",
+			"origin": "github.com/minio/mc/vendor/github.com/mattn/go-isatty",
+			"path": "github.com/mattn/go-isatty",
+			"revision": "9da492975c53f3e0d56aa58934ac5d692a705b8c",
+			"revisionTime": "2018-01-05T22:18:35Z"
+		},
+		{
+			"checksumSHA1": "CgMkKCG6mu3N6n7GxWhyCWYMQWI=",
+			"path": "github.com/minio/mc/pkg/console",
+			"revision": "9da492975c53f3e0d56aa58934ac5d692a705b8c",
+			"revisionTime": "2018-01-05T22:18:35Z"
 		},
 		{
 			"checksumSHA1": "qyslW4tuLDWkfsJRaJ7maePHP8Y=",
@@ -55,6 +82,13 @@
 			"path": "github.com/mitchellh/go-homedir",
 			"revision": "b8bc1bf767474819792c23f32d8286a45736f1c6",
 			"revisionTime": "2016-12-03T19:45:07Z"
+		},
+		{
+			"checksumSHA1": "osOGEHNPu9kb9d7d9DKEoZOSPbs=",
+			"origin": "github.com/minio/mc/vendor/golang.org/x/sys/unix",
+			"path": "golang.org/x/sys/unix",
+			"revision": "9da492975c53f3e0d56aa58934ac5d692a705b8c",
+			"revisionTime": "2018-01-05T22:18:35Z"
 		}
 	],
 	"rootPath": "github.com/harshavardhana/s3www"
