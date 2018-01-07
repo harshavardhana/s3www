@@ -1,0 +1,61 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "jK0knSGdB7hA/Pvc0mQBYkYxN/8=",
+			"path": "github.com/go-ini/ini",
+			"revision": "32e4c1e6bc4e7d0d8451aa6b75200d19e37a536a",
+			"revisionTime": "2017-11-19T05:34:21Z"
+		},
+		{
+			"checksumSHA1": "qyslW4tuLDWkfsJRaJ7maePHP8Y=",
+			"path": "github.com/minio/minio-go",
+			"revision": "6ca54ef551fc38182e7516273a8b9f475efe16ea",
+			"revisionTime": "2018-01-06T23:53:48Z"
+		},
+		{
+			"checksumSHA1": "Qsj+6JPmJ8R5rFNQSHqRb8xAwOw=",
+			"path": "github.com/minio/minio-go/pkg/credentials",
+			"revision": "6ca54ef551fc38182e7516273a8b9f475efe16ea",
+			"revisionTime": "2018-01-06T23:53:48Z"
+		},
+		{
+			"checksumSHA1": "DdSxg5v4/umyYXj8MEB7vYW7Dg8=",
+			"path": "github.com/minio/minio-go/pkg/encrypt",
+			"revision": "6ca54ef551fc38182e7516273a8b9f475efe16ea",
+			"revisionTime": "2018-01-06T23:53:48Z"
+		},
+		{
+			"checksumSHA1": "1dtf5fWjSL+1HqECT3/fPFr/a3M=",
+			"path": "github.com/minio/minio-go/pkg/policy",
+			"revision": "6ca54ef551fc38182e7516273a8b9f475efe16ea",
+			"revisionTime": "2018-01-06T23:53:48Z"
+		},
+		{
+			"checksumSHA1": "yDCYuz+d8kLSPzDvuvEw81gAh18=",
+			"path": "github.com/minio/minio-go/pkg/s3signer",
+			"revision": "6ca54ef551fc38182e7516273a8b9f475efe16ea",
+			"revisionTime": "2018-01-06T23:53:48Z"
+		},
+		{
+			"checksumSHA1": "FFiK9YdbsMBhHorz+dj1I6R8feo=",
+			"path": "github.com/minio/minio-go/pkg/s3utils",
+			"revision": "6ca54ef551fc38182e7516273a8b9f475efe16ea",
+			"revisionTime": "2018-01-06T23:53:48Z"
+		},
+		{
+			"checksumSHA1": "Wt8ej+rZXTdNBR9Xyw1eGo3Iq5o=",
+			"path": "github.com/minio/minio-go/pkg/set",
+			"revision": "6ca54ef551fc38182e7516273a8b9f475efe16ea",
+			"revisionTime": "2018-01-06T23:53:48Z"
+		},
+		{
+			"checksumSHA1": "V/quM7+em2ByJbWBLOsEwnY3j/Q=",
+			"path": "github.com/mitchellh/go-homedir",
+			"revision": "b8bc1bf767474819792c23f32d8286a45736f1c6",
+			"revisionTime": "2016-12-03T19:45:07Z"
+		}
+	],
+	"rootPath": "github.com/harshavardhana/s3www"
+}
