@@ -35,7 +35,7 @@ func (s3 *S3) Open(name string) (http.File, error) {
 	}
 
 	name = strings.TrimPrefix(name, "/")
-	obj, err := s3.Client.GetObject(s3.bucket, name, minio.GetObjectOptions{})
+	obj, err := getObject(s3, name)
 	if err != nil {
 		return nil, os.ErrNotExist
 	}
@@ -51,6 +51,20 @@ func (s3 *S3) Open(name string) (http.File, error) {
 		bucket: bucket,
 		prefix: name,
 	}, nil
+}
+
+func getObject(s3 *S3, name string) (*minio.Object, error) {
+	names := [3]string{name, name + "/index.html", name + "/index.htm"}
+	for _, n := range names {
+		obj, err := s3.Client.GetObject(s3.bucket, n, minio.GetObjectOptions{})
+
+		if err == nil {
+			if _, err = obj.Stat(); err == nil {
+				return obj, nil
+			}
+		}
+	}
+	return nil, os.ErrNotExist
 }
 
 var (
