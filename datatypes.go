@@ -5,7 +5,7 @@ import (
 	"syscall"
 	"time"
 
-	minio "github.com/minio/minio-go"
+	minio "github.com/minio/minio-go/v6"
 )
 
 // objectInfo implements os.FileInfo interface,

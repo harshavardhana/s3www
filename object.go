@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	minio "github.com/minio/minio-go"
+	minio "github.com/minio/minio-go/v6"
 )
 
 // A httpMinioObject implements http.File interface, returned by a S3

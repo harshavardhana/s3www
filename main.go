@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/minio/mc/pkg/console"
-	minio "github.com/minio/minio-go"
+	minio "github.com/minio/minio-go/v6"
 )
 
 // S3 - A S3 implements FileSystem using the minio client
@@ -78,10 +78,10 @@ var (
 )
 
 func init() {
-	flag.StringVar(&endpoint, "endpoint", "https://s3.amazonaws.com", "S3 server endpoint.")
-	flag.StringVar(&accessKey, "accessKey", "", "Access key of S3 storage.")
-	flag.StringVar(&secretKey, "secretKey", "", "Secret key of S3 storage.")
-	flag.StringVar(&bucket, "bucket", "", "Bucket name which hosts static files.")
+	flag.StringVar(&endpoint, "endpoint", "https://play.min.io", "S3 server endpoint.")
+	flag.StringVar(&accessKey, "accessKey", "Q3AM3UQ867SPQQA43P2F", "Access key of S3 storage.")
+	flag.StringVar(&secretKey, "secretKey", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG", "Secret key of S3 storage.")
+	flag.StringVar(&bucket, "bucket", "testbucket", "Bucket name which hosts static files.")
 	flag.StringVar(&address, "address", "127.0.0.1:8080", "Bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname.")
 	flag.StringVar(&tlsCert, "ssl-cert", "", "TLS certificate for this server.")
 	flag.StringVar(&tlsKey, "ssl-key", "", "TLS private key for this server.")
