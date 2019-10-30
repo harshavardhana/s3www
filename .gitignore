@@ -23,4 +23,4 @@ _testmain.go
 *.test
 *.prof
 
-website-handler
+s3www
