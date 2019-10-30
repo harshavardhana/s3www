@@ -8,6 +8,10 @@ import (
 	minio "github.com/minio/minio-go/v6"
 )
 
+const (
+	pathSeparator = "/"
+)
+
 // A httpMinioObject implements http.File interface, returned by a S3
 // Open method and can be served by the FileServer implementation.
 type httpMinioObject struct {
@@ -32,24 +36,22 @@ func (h *httpMinioObject) Seek(offset int64, whence int) (int64, error) {
 
 func (h *httpMinioObject) Readdir(count int) ([]os.FileInfo, error) {
 	// List 'N' number of objects from a bucket-name with a matching prefix.
-	listObjectsN := func(bucket, prefix string, recursive bool, N int) (objsInfo []minio.ObjectInfo, err error) {
+	listObjectsN := func(bucket, prefix string, count int) (objsInfo []minio.ObjectInfo, err error) {
 		// Create a done channel to control 'ListObjects' go routine.
-		doneCh := make(chan struct{}, 1)
+		doneCh := make(chan struct{})
 
 		// Free the channel upon return.
 		defer close(doneCh)
 
 		i := 1
-		for object := range h.client.ListObjects(bucket, prefix, recursive, doneCh) {
+		for object := range h.client.ListObjects(bucket, prefix, false, doneCh) {
 			if object.Err != nil {
 				return nil, object.Err
 			}
 			i++
 			// Verify if we have printed N objects.
-			if i == N {
-				// Indicate ListObjects go-routine to exit and stop
-				// feeding the objectInfo channel.
-				doneCh <- struct{}{}
+			if i == count {
+				return
 			}
 			objsInfo = append(objsInfo, object)
 		}
@@ -57,20 +59,19 @@ func (h *httpMinioObject) Readdir(count int) ([]os.FileInfo, error) {
 	}
 
 	// List non-recursively first count entries for prefix 'prefix" prefix.
-	recursive := count == -1
-	objsInfo, err := listObjectsN(h.bucket, h.prefix, recursive, count)
+	objsInfo, err := listObjectsN(h.bucket, h.prefix, count)
 	if err != nil {
 		return nil, os.ErrNotExist
 	}
 	var fileInfos []os.FileInfo
 	for _, objInfo := range objsInfo {
-		if strings.HasSuffix(objInfo.Key, "/") {
+		if strings.HasSuffix(objInfo.Key, pathSeparator) {
 			fileInfos = append(fileInfos, objectInfo{
 				ObjectInfo: minio.ObjectInfo{
-					Key:          objInfo.Key,
-					LastModified: time.Now().UTC(),
+					Key:          strings.TrimSuffix(objInfo.Key, pathSeparator),
+					LastModified: objInfo.LastModified,
 				},
-				prefix: objInfo.Key,
+				prefix: strings.TrimSuffix(objInfo.Key, pathSeparator),
 				isDir:  true,
 			})
 			continue
