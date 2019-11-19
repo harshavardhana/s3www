@@ -1,4 +1,4 @@
-module github.com/minio/s3www
+module github.com/harshavardhana/s3www
 
 go 1.12
 
