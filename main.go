@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"github.com/mholt/certmagic"
-	"github.com/minio/mc/pkg/console"
 	minio "github.com/minio/minio-go/v6"
 	"github.com/minio/minio-go/v6/pkg/credentials"
 	"github.com/minio/minio-go/v6/pkg/s3utils"
+	"github.com/minio/minio/pkg/console"
 )
 
 // S3 - A S3 implements FileSystem using the minio client
