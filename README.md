@@ -2,7 +2,7 @@
 Serve static files from any S3 compatible object storage endpoints.
 
 ## Install
-If you do not have a working Golang environment, please follow [How to install Golang](https://golang.org/doc/install). Minimum version required is [go-latest](https://golang.org/dl/#stable)
+Released binaries are available [here](https://github.com/harshavardhana/s3www/releases), or you can compile yourself from source.
 
 ```
 go get github.com/harshavardhana/s3www
