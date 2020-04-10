@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 	"net"
 	"net/http"
 	"net/url"
@@ -13,7 +14,6 @@ import (
 	minio "github.com/minio/minio-go/v6"
 	"github.com/minio/minio-go/v6/pkg/credentials"
 	"github.com/minio/minio-go/v6/pkg/s3utils"
-	"github.com/minio/minio/pkg/console"
 )
 
 // S3 - A S3 implements FileSystem using the minio client
@@ -113,12 +113,12 @@ func main() {
 	flag.Parse()
 
 	if strings.TrimSpace(bucket) == "" {
-		console.Fatalln(`Bucket name cannot be empty, please provide 's3www -bucket "mybucket"'`)
+		log.Fatalln(`Bucket name cannot be empty, please provide 's3www -bucket "mybucket"'`)
 	}
 
 	u, err := url.Parse(endpoint)
 	if err != nil {
-		console.Fatalln(err)
+		log.Fatalln(err)
 	}
 
 	// Chains all credential types, in the following order:
@@ -159,18 +159,18 @@ func main() {
 		BucketLookup: minio.BucketLookupAuto,
 	})
 	if err != nil {
-		console.Fatalln(err)
+		log.Fatalln(err)
 	}
 
 	mux := http.FileServer(&S3{client, bucket})
 	if letsEncrypt {
-		console.Infof("Started listening on https://%s\n", address)
+		log.Printf("Started listening on https://%s\n", address)
 		certmagic.HTTPS([]string{address}, mux)
 	} else if tlsCert != "" && tlsKey != "" {
-		console.Infof("Started listening on https://%s\n", address)
-		console.Fatalln(http.ListenAndServeTLS(address, tlsCert, tlsKey, mux))
+		log.Printf("Started listening on https://%s\n", address)
+		log.Fatalln(http.ListenAndServeTLS(address, tlsCert, tlsKey, mux))
 	} else {
-		console.Infof("Started listening on http://%s\n", address)
-		console.Fatalln(http.ListenAndServe(address, mux))
+		log.Printf("Started listening on http://%s\n", address)
+		log.Fatalln(http.ListenAndServe(address, mux))
 	}
 }
