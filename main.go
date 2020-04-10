@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mholt/certmagic"
+	"github.com/caddyserver/certmagic"
 	minio "github.com/minio/minio-go/v6"
 	"github.com/minio/minio-go/v6/pkg/credentials"
 	"github.com/minio/minio-go/v6/pkg/s3utils"
