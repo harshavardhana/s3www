@@ -24,3 +24,4 @@ _testmain.go
 *.prof
 
 s3www
+*~

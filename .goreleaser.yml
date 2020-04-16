@@ -1,37 +1,58 @@
 # This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
+project_name: s3www
+
 before:
   hooks:
     - go mod tidy
 builds:
   -
-    asmflags:
-      - all=-trimpath={{.Env.GOPATH}}
-
-    gcflags:
-      - all=-trimpath={{.Env.GOPATH}}
-
+    flags:
+      - -trimpath
     goos:
       - darwin
       - linux
       - freebsd
-
     goarch:
       - amd64
       - arm64
       - ppc64le
       - s390x
-
     env:
       - CGO_ENABLED=0
+archives:
+  -
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - LICENSE
 
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: 'snapshot-{{ time "2006-01-02" }}'
 changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
+      - '^docs:'
+      - '^test:'
+nfpms:
+  -
+    description: Serve static files from any S3 bucket
+    license: Apache License Version 2.0
+    formats:
+      - deb
+      - rpm
+dockers:
+  -
+    # GOOS of the built binary that should be used.
+    goos: linux
+    # GOARCH of the built binary that should be used.
+    goarch: amd64
+    dockerfile: Dockerfile.release
+    image_templates:
+      - "y4m4/s3www:{{ .Tag }}"
+      - "y4m4/s3www:latest"
