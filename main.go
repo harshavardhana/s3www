@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 	"net"
@@ -11,9 +12,9 @@ import (
 	"time"
 
 	"github.com/caddyserver/certmagic"
-	minio "github.com/minio/minio-go/v6"
-	"github.com/minio/minio-go/v6/pkg/credentials"
-	"github.com/minio/minio-go/v6/pkg/s3utils"
+	minio "github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/minio/minio-go/v7/pkg/s3utils"
 )
 
 // S3 - A S3 implements FileSystem using the minio client
@@ -40,7 +41,7 @@ func (s3 *S3) Open(name string) (http.File, error) {
 	}
 
 	name = strings.TrimPrefix(name, pathSeparator)
-	obj, err := getObject(s3, name)
+	obj, err := getObject(context.Background(), s3, name)
 	if err != nil {
 		return nil, os.ErrNotExist
 	}
@@ -54,10 +55,10 @@ func (s3 *S3) Open(name string) (http.File, error) {
 	}, nil
 }
 
-func getObject(s3 *S3, name string) (*minio.Object, error) {
+func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) {
 	names := [3]string{name, name + "/index.html", name + "/index.htm"}
 	for _, n := range names {
-		obj, err := s3.Client.GetObject(s3.bucket, n, minio.GetObjectOptions{})
+		obj, err := s3.Client.GetObject(ctx, s3.bucket, n, minio.GetObjectOptions{})
 		if err == nil {
 			if _, err = obj.Stat(); err == nil {
 				return obj, nil
@@ -152,11 +153,12 @@ func main() {
 	// Specifically IAM style rotating credentials are only supported with AWS S3 endpoint.
 	creds := credentials.NewChainCredentials(defaultAWSCredProviders)
 
-	client, err := minio.NewWithOptions(u.Host, &minio.Options{
+	client, err := minio.New(u.Host, &minio.Options{
 		Creds:        creds,
 		Secure:       u.Scheme == "https",
 		Region:       s3utils.GetRegionFromURL(*u),
 		BucketLookup: minio.BucketLookupAuto,
+		Transport:    NewCustomHTTPTransport(),
 	})
 	if err != nil {
 		log.Fatalln(err)

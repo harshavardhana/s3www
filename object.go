@@ -1,11 +1,12 @@
 package main
 
 import (
+	"context"
 	"os"
 	"strings"
 	"time"
 
-	minio "github.com/minio/minio-go/v6"
+	minio "github.com/minio/minio-go/v7"
 )
 
 const (
@@ -37,14 +38,11 @@ func (h *httpMinioObject) Seek(offset int64, whence int) (int64, error) {
 func (h *httpMinioObject) Readdir(count int) ([]os.FileInfo, error) {
 	// List 'N' number of objects from a bucket-name with a matching prefix.
 	listObjectsN := func(bucket, prefix string, count int) (objsInfo []minio.ObjectInfo, err error) {
-		// Create a done channel to control 'ListObjects' go routine.
-		doneCh := make(chan struct{})
-
-		// Free the channel upon return.
-		defer close(doneCh)
-
 		i := 1
-		for object := range h.client.ListObjects(bucket, prefix, false, doneCh) {
+		for object := range h.client.ListObjects(context.Background(), bucket, minio.ListObjectsOptions{
+			Prefix:    prefix,
+			Recursive: false,
+		}) {
 			if object.Err != nil {
 				return nil, object.Err
 			}
