@@ -37,3 +37,4 @@ Point your web browser to http://127.0.0.1:8080 ensure your `s3www` is serving y
 ## License
 This project is distributed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0), see [LICENSE](./LICENSE) for more information.
 
+<a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/y4m4"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee"><span style="margin-left:5px;font-size:24px !important;">Buy me a coffee</span></a>
