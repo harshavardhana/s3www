@@ -59,12 +59,23 @@ func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) 
 	names := [3]string{name, name + "/index.html", name + "/index.htm"}
 	for _, n := range names {
 		obj, err := s3.Client.GetObject(ctx, s3.bucket, n, minio.GetObjectOptions{})
-		if err == nil {
-			if _, err = obj.Stat(); err == nil {
-				return obj, nil
-			}
+		if err != nil {
+			log.Println(err)
+			return nil, os.ErrNotExist
 		}
+
+		_, err = obj.Stat()
+		if err != nil {
+			// do not log "file" in bucket not found errors
+			if err.Error() != "The specified key does not exist." {
+				log.Println(err)
+			}
+			return nil, os.ErrNotExist
+		}
+
+		return obj, nil
 	}
+
 	return nil, os.ErrNotExist
 }
 
