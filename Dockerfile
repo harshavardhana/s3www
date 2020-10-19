@@ -16,6 +16,9 @@ RUN go build -ldflags '-w -s' -a -o s3www .
 FROM scratch
 EXPOSE 8080
 
+# Copy CA certificates to prevent x509: certificate signed by unknown authority errors
+COPY --from=0 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
 COPY --from=0 /go/src/github.com/harshavardhana/s3www/s3www /s3www
 
 ENTRYPOINT ["/s3www"]
