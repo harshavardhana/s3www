@@ -31,6 +31,26 @@ s3www -endpoint "https://s3.amazonaws.com" -accessKey "accessKey" \
 s3www: Started listening on http://127.0.0.1:8080
 ```
 
+## Run with docker
+
+### Docker images:
+
+- `docker pull y4m4/s3www:<RELEASE_VERSION>`
+- `docker pull y4m4/s3www:latest`
+
+Make sure you have `index.html` under `website-bucket`
+
+```
+docker run --rm -p 8080:8080 y4m4/s3www:latest \
+      -endpoint "https://s3.amazonaws.com" \
+      -accessKey "accessKey" \
+      -secretKey "secretKey" \
+      -bucket "website-bucket" \
+      -address "0.0.0.0:8080"
+
+s3www: Started listening on http://0.0.0.0:8080
+```
+
 ### Test
 Point your web browser to http://127.0.0.1:8080 ensure your `s3www` is serving your `index.html` successfully.
 
