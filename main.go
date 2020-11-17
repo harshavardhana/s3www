@@ -67,7 +67,7 @@ func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) 
 		_, err = obj.Stat()
 		if err != nil {
 			// do not log "file" in bucket not found errors
-			if err.Error() != "The specified key does not exist." {
+			if minio.ToErrorResponse(err).Code != "NoSuchKey" {
 				log.Println(err)
 			}
 			return nil, os.ErrNotExist
