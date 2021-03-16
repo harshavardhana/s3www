@@ -1,5 +1,0 @@
-FROM scratch
-EXPOSE 8080
-COPY s3www /s3www
-
-ENTRYPOINT ["/s3www"]
