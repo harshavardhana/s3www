@@ -52,7 +52,7 @@ dockers:
     goos: linux
     # GOARCH of the built binary that should be used.
     goarch: amd64
-    dockerfile: Dockerfile.release
+    dockerfile: Dockerfile
     image_templates:
       - "y4m4/s3www:{{ .Tag }}"
       - "y4m4/s3www:latest"
