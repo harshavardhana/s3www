@@ -1,6 +1,6 @@
 module github.com/harshavardhana/s3www
 
-go 1.14
+go 1.16
 
 require (
 	github.com/caddyserver/certmagic v0.12.0
