@@ -56,12 +56,12 @@ func (s3 *S3) Open(name string) (http.File, error) {
 }
 
 func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) {
-	names := [3]string{name, name + "/index.html", name + "/index.htm"}
+	names := [4]string{name, name + "/index.html", name + "/index.htm", "/404.html"}
 	for _, n := range names {
 		obj, err := s3.Client.GetObject(ctx, s3.bucket, n, minio.GetObjectOptions{})
 		if err != nil {
 			log.Println(err)
-			return nil, os.ErrNotExist
+			continue
 		}
 
 		_, err = obj.Stat()
@@ -70,7 +70,7 @@ func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) 
 			if minio.ToErrorResponse(err).Code != "NoSuchKey" {
 				log.Println(err)
 			}
-			return nil, os.ErrNotExist
+			continue
 		}
 
 		return obj, nil
