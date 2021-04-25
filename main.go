@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -15,6 +16,8 @@ import (
 	minio "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio-go/v7/pkg/s3utils"
+	cache "github.com/victorspringer/http-cache"
+	"github.com/victorspringer/http-cache/adapter/memory"
 )
 
 // S3 - A S3 implements FileSystem using the minio client
@@ -175,7 +178,29 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	mux := http.FileServer(&S3{client, bucket})
+	memcached, err := memory.NewAdapter(
+		memory.AdapterWithAlgorithm(memory.LRU),
+		memory.AdapterWithCapacity(10_000_000),
+	)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	cacheClient, err := cache.NewClient(
+		cache.ClientWithAdapter(memcached),
+		cache.ClientWithTTL(3*time.Minute),
+		cache.ClientWithRefreshKey("opn"),
+	)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	mux := cacheClient.Middleware(http.FileServer(&S3{client, bucket}))
+
 	if letsEncrypt {
 		log.Printf("Started listening on https://%s\n", address)
 		certmagic.HTTPS([]string{address}, mux)
