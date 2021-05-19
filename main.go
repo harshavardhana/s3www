@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"strings"
 	"time"
 
@@ -17,6 +18,10 @@ import (
 	"github.com/minio/minio-go/v7/pkg/s3utils"
 )
 
+type S3Options struct {
+	root string
+}
+
 // S3 - A S3 implements FileSystem using the minio client
 // allowing access to your S3 buckets and objects.
 //
@@ -25,23 +30,26 @@ import (
 // sure to not sure this project.
 type S3 struct {
 	*minio.Client
-	bucket string
+	bucket  string
+	options S3Options
 }
 
 // Open - implements http.Filesystem implementation.
 func (s3 *S3) Open(name string) (http.File, error) {
-	if strings.HasSuffix(name, pathSeparator) {
-		return &httpMinioObject{
-			client: s3.Client,
-			object: nil,
-			isDir:  true,
-			bucket: bucket,
-			prefix: strings.TrimSuffix(name, pathSeparator),
-		}, nil
-	}
+	// isDirectory := strings.HasSuffix(name, pathSeparator)
+	path := path.Join(s3.options.root, name)
 
-	name = strings.TrimPrefix(name, pathSeparator)
-	obj, err := getObject(context.Background(), s3, name)
+	// if isDirectory {
+	// 	return &httpMinioObject{
+	// 		client: s3.Client,
+	// 		object: nil,
+	// 		isDir:  true,
+	// 		bucket: bucket,
+	// 		prefix: path,
+	// 	}, nil
+	// }
+
+	obj, err := getObject(context.Background(), s3, path)
 	if err != nil {
 		return nil, os.ErrNotExist
 	}
@@ -51,14 +59,15 @@ func (s3 *S3) Open(name string) (http.File, error) {
 		object: obj,
 		isDir:  false,
 		bucket: bucket,
-		prefix: name,
+		prefix: path,
 	}, nil
 }
 
 func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) {
-	names := [4]string{name, name + "/index.html", name + "/index.htm", "/404.html"}
-	for _, n := range names {
-		obj, err := s3.Client.GetObject(ctx, s3.bucket, n, minio.GetObjectOptions{})
+	paths := [3]string{name, path.Join(name, "index.html"), "/404.html"}
+	for _, path := range paths {
+		log.Println("try:", path)
+		obj, err := s3.Client.GetObject(ctx, s3.bucket, path, minio.GetObjectOptions{})
 		if err != nil {
 			log.Println(err)
 			continue
@@ -88,6 +97,7 @@ var (
 	tlsCert     string
 	tlsKey      string
 	letsEncrypt bool
+	rootPath    string
 )
 
 func init() {
@@ -99,6 +109,7 @@ func init() {
 	flag.StringVar(&tlsCert, "ssl-cert", "", "TLS certificate for this server")
 	flag.StringVar(&tlsKey, "ssl-key", "", "TLS private key for this server")
 	flag.BoolVar(&letsEncrypt, "lets-encrypt", false, "Enable Let's Encrypt")
+	flag.StringVar(&rootPath, "root", "", "Serve files from a sub folder of the bucket")
 }
 
 // NewCustomHTTPTransport returns a new http configuration
@@ -175,7 +186,11 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	mux := http.FileServer(&S3{client, bucket})
+	s3Options := S3Options{
+		rootPath,
+	}
+	mux := http.FileServer(&S3{client, bucket, s3Options})
+
 	if letsEncrypt {
 		log.Printf("Started listening on https://%s\n", address)
 		certmagic.HTTPS([]string{address}, mux)
