@@ -35,7 +35,8 @@ func pathIsDir(ctx context.Context, s3 *S3, name string) bool {
 	objCh := s3.Client.ListObjects(listCtx,
 		s3.bucket,
 		minio.ListObjectsOptions{
-			Prefix: name,
+			Prefix:  name,
+			MaxKeys: 1,
 		})
 	for _ = range objCh {
 		cancel()
