@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -108,14 +109,32 @@ var (
 )
 
 func init() {
-	flag.StringVar(&endpoint, "endpoint", "", "S3 server endpoint")
-	flag.StringVar(&accessKey, "accessKey", "", "Access key of S3 storage")
-	flag.StringVar(&secretKey, "secretKey", "", "Secret key of S3 storage")
-	flag.StringVar(&bucket, "bucket", "", "Bucket name which hosts static files")
-	flag.StringVar(&address, "address", "127.0.0.1:8080", "Bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname")
-	flag.StringVar(&tlsCert, "ssl-cert", "", "TLS certificate for this server")
-	flag.StringVar(&tlsKey, "ssl-key", "", "TLS private key for this server")
-	flag.BoolVar(&letsEncrypt, "lets-encrypt", false, "Enable Let's Encrypt")
+	flag.StringVar(&endpoint, "endpoint", defaultEnvString("S3WWW_ENDPOINT", ""), "S3 server endpoint")
+	flag.StringVar(&accessKey, "accessKey", defaultEnvString("S3WWW_ACCESS_KEY", ""), "Access key of S3 storage")
+	flag.StringVar(&secretKey, "secretKey", defaultEnvString("S3WWW_SECRET_KEY", ""), "Secret key of S3 storage")
+	flag.StringVar(&bucket, "bucket", defaultEnvString("S3WWW_BUCKET", ""), "Bucket name which hosts static files")
+	flag.StringVar(&address, "address", defaultEnvString("S3WWW_ADDRESS", "127.0.0.1:8080"), "Bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname")
+	flag.StringVar(&tlsCert, "ssl-cert", defaultEnvString("S3WWW_SSL_CERT", ""), "TLS certificate for this server")
+	flag.StringVar(&tlsKey, "ssl-key", defaultEnvString("S3WWW_SSL_KEY", ""), "TLS private key for this server")
+	flag.BoolVar(&letsEncrypt, "lets-encrypt", defaultEnvBool("S3WWW_LETS_ENCRYPT", false), "Enable Let's Encrypt")
+}
+
+func defaultEnvString(key string, defaultVal string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
+	}
+	return defaultVal
+}
+
+func defaultEnvBool(key string, defaultVal bool) bool {
+	if val, ok := os.LookupEnv(key); ok {
+		parsedVal, err := strconv.ParseBool(val)
+		if err == nil {
+			return parsedVal
+		}
+		log.Printf("String of %q did not parse as bool for env var %q", val, key)
+	}
+	return defaultVal
 }
 
 // NewCustomHTTPTransport returns a new http configuration
