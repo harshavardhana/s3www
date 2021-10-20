@@ -28,9 +28,25 @@ type S3 struct {
 	bucket string
 }
 
+func pathIsDir(ctx context.Context, s3 *S3, name string) bool {
+	name = strings.TrimPrefix(name, pathSeparator) + pathSeparator
+	listCtx, cancel := context.WithCancel(ctx)
+
+	objCh := s3.Client.ListObjects(listCtx,
+		s3.bucket,
+		minio.ListObjectsOptions{
+			Prefix: name,
+		})
+	for _ = range objCh {
+		cancel()
+		return true
+	}
+	return false
+}
+
 // Open - implements http.Filesystem implementation.
 func (s3 *S3) Open(name string) (http.File, error) {
-	if strings.HasSuffix(name, pathSeparator) {
+	if pathIsDir(context.Background(), s3, name) {
 		return &httpMinioObject{
 			client: s3.Client,
 			object: nil,
