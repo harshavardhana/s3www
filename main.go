@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -98,20 +99,24 @@ func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) 
 }
 
 var (
-	endpoint    string
-	accessKey   string
-	secretKey   string
-	address     string
-	bucket      string
-	tlsCert     string
-	tlsKey      string
-	letsEncrypt bool
+	endpoint      string
+	accessKey     string
+	accessKeyFile string
+	secretKey     string
+	secretKeyFile string
+	address       string
+	bucket        string
+	tlsCert       string
+	tlsKey        string
+	letsEncrypt   bool
 )
 
 func init() {
 	flag.StringVar(&endpoint, "endpoint", defaultEnvString("S3WWW_ENDPOINT", ""), "S3 server endpoint")
 	flag.StringVar(&accessKey, "accessKey", defaultEnvString("S3WWW_ACCESS_KEY", ""), "Access key of S3 storage")
+	flag.StringVar(&accessKeyFile, "accessKeyFile", defaultEnvString("S3WWW_ACCESS_KEY_FILE", ""), "File which contains the access key")
 	flag.StringVar(&secretKey, "secretKey", defaultEnvString("S3WWW_SECRET_KEY", ""), "Secret key of S3 storage")
+	flag.StringVar(&secretKeyFile, "secretKeyFile", defaultEnvString("S3WWW_SECRET_KEY_FILE", ""), "File which contains the Secret key")
 	flag.StringVar(&bucket, "bucket", defaultEnvString("S3WWW_BUCKET", ""), "Bucket name which hosts static files")
 	flag.StringVar(&address, "address", defaultEnvString("S3WWW_ADDRESS", "127.0.0.1:8080"), "Bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname")
 	flag.StringVar(&tlsCert, "ssl-cert", defaultEnvString("S3WWW_SSL_CERT", ""), "TLS certificate for this server")
@@ -184,6 +189,20 @@ func main() {
 			},
 		},
 		&credentials.EnvMinio{},
+	}
+	if accessKeyFile != "" {
+		if keyBytes, err := ioutil.ReadFile(accessKeyFile); err == nil {
+			accessKey = strings.TrimSpace(string(keyBytes))
+		} else {
+			log.Fatalf("Failed to read access key file %q", accessKeyFile)
+		}
+	}
+	if secretKeyFile != "" {
+		if keyBytes, err := ioutil.ReadFile(secretKeyFile); err == nil {
+			secretKey = strings.TrimSpace(string(keyBytes))
+		} else {
+			log.Fatalf("Failed to read secret key file %q", secretKeyFile)
+		}
 	}
 	if accessKey != "" && secretKey != "" {
 		defaultAWSCredProviders = []credentials.Provider{
