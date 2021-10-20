@@ -29,7 +29,7 @@ type S3 struct {
 }
 
 func pathIsDir(ctx context.Context, s3 *S3, name string) bool {
-	name = strings.TrimPrefix(name, pathSeparator) + pathSeparator
+	name = strings.Trim(name, pathSeparator) + pathSeparator
 	listCtx, cancel := context.WithCancel(ctx)
 
 	objCh := s3.Client.ListObjects(listCtx,
@@ -46,7 +46,7 @@ func pathIsDir(ctx context.Context, s3 *S3, name string) bool {
 
 // Open - implements http.Filesystem implementation.
 func (s3 *S3) Open(name string) (http.File, error) {
-	if pathIsDir(context.Background(), s3, name) {
+	if name == pathSeparator || pathIsDir(context.Background(), s3, name) {
 		return &httpMinioObject{
 			client: s3.Client,
 			object: nil,
