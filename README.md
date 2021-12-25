@@ -1,5 +1,5 @@
 # s3www
-Serve static files from any S3 compatible object storage endpoints. Similar in spirit of https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html instead allows your bucket to be private and secure.
+Serve static files from any S3 compatible object storage endpoints. Similar in spirit of https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html instead allows your bucket to be private, secure and custom domain TLS based on Let's Encrypt for free.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
