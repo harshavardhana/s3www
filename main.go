@@ -126,16 +126,16 @@ var (
 )
 
 func init() {
-	flag.StringVar(&endpoint, "endpoint", defaultEnvString("S3WWW_ENDPOINT", ""), "S3 server endpoint")
-	flag.StringVar(&accessKey, "accessKey", defaultEnvString("S3WWW_ACCESS_KEY", ""), "Access key of S3 storage")
-	flag.StringVar(&accessKeyFile, "accessKeyFile", defaultEnvString("S3WWW_ACCESS_KEY_FILE", ""), "File which contains the access key")
-	flag.StringVar(&secretKey, "secretKey", defaultEnvString("S3WWW_SECRET_KEY", ""), "Secret key of S3 storage")
-	flag.StringVar(&secretKeyFile, "secretKeyFile", defaultEnvString("S3WWW_SECRET_KEY_FILE", ""), "File which contains the Secret key")
-	flag.StringVar(&bucket, "bucket", defaultEnvString("S3WWW_BUCKET", ""), "Bucket name which hosts static files")
-	flag.StringVar(&address, "address", defaultEnvString("S3WWW_ADDRESS", "127.0.0.1:8080"), "Bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname")
-	flag.StringVar(&tlsCert, "ssl-cert", defaultEnvString("S3WWW_SSL_CERT", ""), "TLS certificate for this server")
-	flag.StringVar(&tlsKey, "ssl-key", defaultEnvString("S3WWW_SSL_KEY", ""), "TLS private key for this server")
-	flag.BoolVar(&letsEncrypt, "lets-encrypt", defaultEnvBool("S3WWW_LETS_ENCRYPT", false), "Enable Let's Encrypt")
+	flag.StringVar(&endpoint, "endpoint", defaultEnvString("S3WWW_ENDPOINT", ""), "AWS S3 compatible server endpoint")
+	flag.StringVar(&bucket, "bucket", defaultEnvString("S3WWW_BUCKET", ""), "bucket name with static files")
+	flag.StringVar(&accessKey, "accessKey", defaultEnvString("S3WWW_ACCESS_KEY", ""), "access key for server")
+	flag.StringVar(&secretKey, "secretKey", defaultEnvString("S3WWW_SECRET_KEY", ""), "secret key for server")
+	flag.StringVar(&address, "address", defaultEnvString("S3WWW_ADDRESS", "127.0.0.1:8080"), "bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname")
+	flag.BoolVar(&letsEncrypt, "lets-encrypt", defaultEnvBool("S3WWW_LETS_ENCRYPT", false), "enable Let's Encrypt for automatic TLS certs for the DOMAIN")
+	flag.StringVar(&tlsCert, "ssl-cert", defaultEnvString("S3WWW_SSL_CERT", ""), "public TLS certificate for this server")
+	flag.StringVar(&tlsKey, "ssl-key", defaultEnvString("S3WWW_SSL_KEY", ""), "private TLS key for this server")
+	flag.StringVar(&accessKeyFile, "accessKeyFile", defaultEnvString("S3WWW_ACCESS_KEY_FILE", ""), "file which contains the access key")
+	flag.StringVar(&secretKeyFile, "secretKeyFile", defaultEnvString("S3WWW_SECRET_KEY_FILE", ""), "file which contains the secret key")
 }
 
 func defaultEnvString(key string, defaultVal string) string {
@@ -169,9 +169,9 @@ func NewCustomHTTPTransport() *http.Transport {
 		}).DialContext,
 		MaxIdleConns:          1024,
 		MaxIdleConnsPerHost:   1024,
-		IdleConnTimeout:       30 * time.Second,
+		IdleConnTimeout:       60 * time.Second,
 		TLSHandshakeTimeout:   10 * time.Second,
-		ExpectContinueTimeout: 1 * time.Second,
+		ExpectContinueTimeout: 10 * time.Second,
 		DisableCompression:    true,
 	}
 }
