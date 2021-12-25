@@ -1,10 +1,12 @@
-# s3www
+![s3www](https://raw.githubusercontent.com/harshavardhana/s3www/master/s3www.png)
+
 Serve static files from any S3 compatible object storage endpoints. Similar in spirit of [AWS S3 Static Website Hosting](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html) instead allows your bucket to be private, secure and domain TLS based on Let's Encrypt for free.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
 - [s3www](#s3www)
+    - [Features](#features)
     - [Install](#install)
     - [Binary](#binary)
     - [Container](#container)
@@ -12,6 +14,9 @@ Serve static files from any S3 compatible object storage endpoints. Similar in s
 - [License](#license)
 
 <!-- markdown-toc end -->
+## Features
+- Automatic credentials rotation when deployed on AWS EC2, ECS or EKS services for your AWS S3 buckets - yay! 🔒😍
+- Automatic certs renewal for your DOMAIN along with OCSP stapling, full suite of ACME features, HTTP->HTTPS redirection (all thanks to [certmagic](github.com/caddyserver/certmagic)).
 
 ## Install
 Released binaries are available [here](https://github.com/harshavardhana/s3www/releases), or you can compile yourself from source.
