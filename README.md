@@ -1,5 +1,5 @@
 # s3www
-Serve static files from any S3 compatible object storage endpoints. Similar in spirit of https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html instead allows your bucket to be private, secure and custom domain TLS based on Let's Encrypt for free.
+Serve static files from any S3 compatible object storage endpoints. Similar in spirit of [AWS S3 Static Website Hosting](https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteHosting.html) instead allows your bucket to be private, secure and domain TLS based on Let's Encrypt for free.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
@@ -63,5 +63,3 @@ Point your web browser to https://example.com ensure your `s3www` is serving you
 
 # License
 This project is distributed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0), see [LICENSE](./LICENSE) for more information.
-
-<a class="bmc-button" target="_blank" href="https://www.buymeacoffee.com/y4m4"><img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee"><span style="margin-left:5px;font-size:24px !important;">Buy me a coffee</span></a>
