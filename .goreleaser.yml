@@ -42,6 +42,7 @@ archives:
     files:
       - README.md
       - LICENSE
+      - CREDITS
 
 checksum:
   name_template: 'checksums.txt'
@@ -61,12 +62,57 @@ nfpms:
       - deb
       - rpm
 dockers:
-  -
-    # GOOS of the built binary that should be used.
-    goos: linux
-    # GOARCH of the built binary that should be used.
-    goarch: amd64
-    dockerfile: Dockerfile
-    image_templates:
-      - "y4m4/s3www:{{ .Tag }}"
-      - "y4m4/s3www:latest"
+- image_templates:
+  - "y4m4/s3www:{{ .Tag }}-amd64"
+  use: buildx
+  dockerfile: Dockerfile
+  extra_files:
+    - LICENSE
+    - CREDITS
+  build_flag_templates:
+  - "--platform=linux/amd64"
+  - "--build-arg=TAG={{ .Tag }}"
+- image_templates:
+  - "y4m4/s3www:{{ .Tag }}-ppc64le"
+  use: buildx
+  dockerfile: Dockerfile
+  extra_files:
+    - LICENSE
+    - CREDITS
+  build_flag_templates:
+  - "--platform=linux/ppc64le"
+  - "--build-arg=TAG={{ .Tag }}"
+- image_templates:
+  - "y4m4/s3www:{{ .Tag }}-s390x"
+  use: buildx
+  dockerfile: Dockerfile
+  extra_files:
+    - LICENSE
+    - CREDITS
+  build_flag_templates:
+  - "--platform=linux/s390x"
+  - "--build-arg=TAG={{ .Tag }}"
+- image_templates:
+  - "y4m4/s3www:{{ .Tag }}-arm64"
+  use: buildx
+  dockerfile: Dockerfile
+  extra_files:
+    - LICENSE
+    - CREDITS
+  build_flag_templates:
+  - "--platform=linux/arm64"
+  - "--build-arg=TAG={{ .Tag }}"
+
+docker_manifests:
+- name_template: y4m4/s3www:{{ .Tag }}
+  image_templates:
+  - y4m4/s3www:{{ .Tag }}-amd64
+  - y4m4/s3www:{{ .Tag }}-arm64
+  - y4m4/s3www:{{ .Tag }}-ppc64le
+  - y4m4/s3www:{{ .Tag }}-s390x
+- name_template: y4m4/s3www:latest
+  image_templates:
+  - y4m4/s3www:{{ .Tag }}-amd64
+  - y4m4/s3www:{{ .Tag }}-arm64
+  - y4m4/s3www:{{ .Tag }}-ppc64le
+  - y4m4/s3www:{{ .Tag }}-s390x
