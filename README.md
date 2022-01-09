@@ -56,28 +56,28 @@ s3www: Started listening on https://example.com
 
 Point your web browser to https://example.com ensure your `s3www` is serving your `index.html` successfully.
 
-## Permissions 
+## Permissions
 
 ### AWS IAM Policy
 s3www requires access to view and list all files in the bucket.
 
 ```
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "",
-            "Effect": "Allow",
-            "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::<Bucket Name>/*"
-        },
-        {
-            "Sid": "",
-            "Effect": "Allow",
-            "Action": "s3:ListBucket",
-            "Resource": "arn:aws:s3:::<Bucket Name>"
-        }
-    ]
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "",
+			"Effect": "Allow",
+			"Action": "s3:GetObject",
+			"Resource": "arn:aws:s3:::<Bucket Name>/*"
+		},
+		{
+			"Sid": "",
+			"Effect": "Allow",
+			"Action": "s3:ListBucket",
+			"Resource": "arn:aws:s3:::<Bucket Name>"
+		}
+	]
 }
 ```
 # License
