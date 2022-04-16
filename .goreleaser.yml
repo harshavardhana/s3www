@@ -18,7 +18,7 @@ project_name: s3www
 
 before:
   hooks:
-    - go mod tidy
+    - go mod tidy -compat=1.17
 builds:
   -
     flags:
