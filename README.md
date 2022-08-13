@@ -11,7 +11,7 @@ Serve static files from any S3 compatible object storage endpoints.
 ## Install
 Released binaries are available [here](https://github.com/harshavardhana/s3www/releases), or you can compile yourself from source.
 
-> NOTE: minimum Go version needed is v1.17
+> NOTE: minimum Go version needed is v1.18
 
 ```
 go install github.com/harshavardhana/s3www@latest
