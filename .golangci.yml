@@ -26,11 +26,9 @@ linters:
     - goimports
     - misspell
     - govet
-    - golint
+    - revive
     - ineffassign
-    - gosimple
     - deadcode
-    - structcheck
 
 issues:
   exclude-use-default: false

@@ -47,7 +47,7 @@ type S3 struct {
 func pathIsDir(ctx context.Context, s3 *S3, name string) bool {
 	name = strings.Trim(name, pathSeparator) + pathSeparator
 	listCtx, cancel := context.WithCancel(ctx)
-
+	defer cancel()
 	objCh := s3.Client.ListObjects(listCtx,
 		s3.bucket,
 		minio.ListObjectsOptions{
