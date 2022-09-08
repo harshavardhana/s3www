@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/caddyserver/certmagic v0.16.2
-	github.com/minio/minio-go/v7 v7.0.34
+	github.com/minio/minio-go/v7 v7.0.36
 )
 
 require (
