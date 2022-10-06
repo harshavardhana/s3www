@@ -23,12 +23,13 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/caddyserver/certmagic"
-	minio "github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio-go/v7/pkg/s3utils"
 )
@@ -41,7 +42,8 @@ import (
 // sure to not sure this project.
 type S3 struct {
 	*minio.Client
-	bucket string
+	bucket     string
+	bucketPath string
 }
 
 func pathIsDir(ctx context.Context, s3 *S3, name string) bool {
@@ -63,6 +65,7 @@ func pathIsDir(ctx context.Context, s3 *S3, name string) bool {
 
 // Open - implements http.Filesystem implementation.
 func (s3 *S3) Open(name string) (http.File, error) {
+	name = path.Join(s3.bucketPath, name)
 	if name == pathSeparator || pathIsDir(context.Background(), s3, name) {
 		return &httpMinioObject{
 			client: s3.Client,
@@ -120,6 +123,7 @@ var (
 	secretKeyFile string
 	address       string
 	bucket        string
+	bucketPath    string
 	tlsCert       string
 	tlsKey        string
 	letsEncrypt   bool
@@ -128,6 +132,7 @@ var (
 func init() {
 	flag.StringVar(&endpoint, "endpoint", defaultEnvString("S3WWW_ENDPOINT", ""), "AWS S3 compatible server endpoint")
 	flag.StringVar(&bucket, "bucket", defaultEnvString("S3WWW_BUCKET", ""), "bucket name with static files")
+	flag.StringVar(&bucketPath, "bucketPath", defaultEnvString("S3WWW_BUCKET_PATH", "/"), "bucket path to serve static files from")
 	flag.StringVar(&accessKey, "accessKey", defaultEnvString("S3WWW_ACCESS_KEY", ""), "access key for server")
 	flag.StringVar(&secretKey, "secretKey", defaultEnvString("S3WWW_SECRET_KEY", ""), "secret key for server")
 	flag.StringVar(&address, "address", defaultEnvString("S3WWW_ADDRESS", "127.0.0.1:8080"), "bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname")
@@ -244,7 +249,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	mux := http.FileServer(&S3{client, bucket})
+	mux := http.FileServer(&S3{client, bucket, bucketPath})
 	if letsEncrypt {
 		log.Printf("Started listening on https://%s\n", address)
 		certmagic.HTTPS([]string{address}, mux)
