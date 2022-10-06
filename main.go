@@ -17,10 +17,6 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/caddyserver/certmagic"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/minio-go/v7/pkg/s3utils"
 	"io/ioutil"
 	"log"
 	"net"
@@ -31,6 +27,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/caddyserver/certmagic"
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/minio/minio-go/v7/pkg/s3utils"
 )
 
 // S3 - A S3 implements FileSystem using the minio client
