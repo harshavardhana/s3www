@@ -41,8 +41,8 @@ import (
 // sure to not sure this project.
 type S3 struct {
 	*minio.Client
-	bucket string
-	path   string
+	bucket     string
+	bucketPath string
 }
 
 func pathIsDir(ctx context.Context, s3 *S3, name string) bool {
@@ -64,7 +64,7 @@ func pathIsDir(ctx context.Context, s3 *S3, name string) bool {
 
 // Open - implements http.Filesystem implementation.
 func (s3 *S3) Open(name string) (http.File, error) {
-	name = path.Join(s3.path, name)
+	name = path.Join(s3.bucketPath, name)
 	if name == pathSeparator || pathIsDir(context.Background(), s3, name) {
 		return &httpMinioObject{
 			client: s3.Client,
