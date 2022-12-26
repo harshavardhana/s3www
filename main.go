@@ -17,7 +17,6 @@ package main
 import (
 	"context"
 	"flag"
-	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -92,7 +91,11 @@ func (s3 *S3) Open(name string) (http.File, error) {
 }
 
 func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) {
-	names := [4]string{name, name + "/index.html", name + "/index.htm", "/404.html"}
+	names := []string{name, name + "/index.html", name + "/index.htm"}
+	if sapFile != "" {
+		names = append(names, sapFile)
+	}
+	names = append(names, "/404.html")
 	for _, n := range names {
 		obj, err := s3.Client.GetObject(ctx, s3.bucket, n, minio.GetObjectOptions{})
 		if err != nil {
@@ -126,6 +129,7 @@ var (
 	bucketPath    string
 	tlsCert       string
 	tlsKey        string
+	sapFile       string
 	letsEncrypt   bool
 )
 
@@ -141,6 +145,7 @@ func init() {
 	flag.StringVar(&tlsKey, "ssl-key", defaultEnvString("S3WWW_SSL_KEY", ""), "private TLS key for this server")
 	flag.StringVar(&accessKeyFile, "accessKeyFile", defaultEnvString("S3WWW_ACCESS_KEY_FILE", ""), "file which contains the access key")
 	flag.StringVar(&secretKeyFile, "secretKeyFile", defaultEnvString("S3WWW_SECRET_KEY_FILE", ""), "file which contains the secret key")
+	flag.StringVar(&sapFile, "sapFile", defaultEnvString("S3WWW_SAP_FILE", ""), "if working with SAP, the key of the file to call whenever a file dosen't exist")
 }
 
 func defaultEnvString(key string, defaultVal string) string {
@@ -210,14 +215,14 @@ func main() {
 		&credentials.EnvMinio{},
 	}
 	if accessKeyFile != "" {
-		if keyBytes, err := ioutil.ReadFile(accessKeyFile); err == nil {
+		if keyBytes, err := os.ReadFile(accessKeyFile); err == nil {
 			accessKey = strings.TrimSpace(string(keyBytes))
 		} else {
 			log.Fatalf("Failed to read access key file %q", accessKeyFile)
 		}
 	}
 	if secretKeyFile != "" {
-		if keyBytes, err := ioutil.ReadFile(secretKeyFile); err == nil {
+		if keyBytes, err := os.ReadFile(secretKeyFile); err == nil {
 			secretKey = strings.TrimSpace(string(keyBytes))
 		} else {
 			log.Fatalf("Failed to read secret key file %q", secretKeyFile)
