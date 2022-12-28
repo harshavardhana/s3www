@@ -92,8 +92,8 @@ func (s3 *S3) Open(name string) (http.File, error) {
 
 func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) {
 	names := []string{name, name + "/index.html", name + "/index.htm"}
-	if sapFile != "" {
-		names = append(names, sapFile)
+	if spaFile != "" {
+		names = append(names, spaFile)
 	}
 	names = append(names, "/404.html")
 	for _, n := range names {
@@ -129,7 +129,7 @@ var (
 	bucketPath    string
 	tlsCert       string
 	tlsKey        string
-	sapFile       string
+	spaFile       string
 	letsEncrypt   bool
 )
 
@@ -145,7 +145,7 @@ func init() {
 	flag.StringVar(&tlsKey, "ssl-key", defaultEnvString("S3WWW_SSL_KEY", ""), "private TLS key for this server")
 	flag.StringVar(&accessKeyFile, "accessKeyFile", defaultEnvString("S3WWW_ACCESS_KEY_FILE", ""), "file which contains the access key")
 	flag.StringVar(&secretKeyFile, "secretKeyFile", defaultEnvString("S3WWW_SECRET_KEY_FILE", ""), "file which contains the secret key")
-	flag.StringVar(&sapFile, "sapFile", defaultEnvString("S3WWW_SAP_FILE", ""), "if working with SAP, the key of the file to call whenever a file dosen't exist")
+	flag.StringVar(&spaFile, "spaFile", defaultEnvString("S3WWW_SPA_FILE", ""), "if working with SPA (Single Page Applicaton), use this key the set the absolute path of the file to call whenever a file dosen't exist")
 }
 
 func defaultEnvString(key string, defaultVal string) string {
