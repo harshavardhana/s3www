@@ -6,7 +6,7 @@ Serve static files from any S3 compatible object storage endpoints.
 
 ## Features
 - Automatic credentials rotation when deployed on AWS EC2, ECS or EKS services for your AWS S3 buckets - yay! 🔒😍
-- Automatic certs renewal for your DOMAIN along with OCSP stapling, full suite of ACME features, HTTP->HTTPS redirection (all thanks to [certmagic](github.com/caddyserver/certmagic)).
+- Automatic certs renewal for your DOMAIN along with OCSP stapling, full suite of ACME features, HTTP->HTTPS redirection (all thanks to [certmagic](https://github.com/caddyserver/certmagic)).
 
 ## Install
 Released binaries are available [here](https://github.com/harshavardhana/s3www/releases), or you can compile yourself from source.
