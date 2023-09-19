@@ -31,6 +31,8 @@ import (
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio-go/v7/pkg/s3utils"
+	"github.com/IGLOU-EU/go-wildcard/v2"
+	"github.com/rs/cors"
 )
 
 // S3 - A S3 implements FileSystem using the minio client
@@ -119,18 +121,19 @@ func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) 
 }
 
 var (
-	endpoint      string
-	accessKey     string
-	accessKeyFile string
-	secretKey     string
-	secretKeyFile string
-	address       string
-	bucket        string
-	bucketPath    string
-	tlsCert       string
-	tlsKey        string
-	spaFile       string
-	letsEncrypt   bool
+	endpoint            string
+	accessKey           string
+	accessKeyFile       string
+	secretKey           string
+	secretKeyFile       string
+	address             string
+	bucket              string
+	bucketPath          string
+	tlsCert             string
+	tlsKey              string
+	spaFile             string
+	allowedCorsOrigin   string
+	letsEncrypt         bool
 )
 
 func init() {
@@ -146,6 +149,7 @@ func init() {
 	flag.StringVar(&accessKeyFile, "accessKeyFile", defaultEnvString("S3WWW_ACCESS_KEY_FILE", ""), "file which contains the access key")
 	flag.StringVar(&secretKeyFile, "secretKeyFile", defaultEnvString("S3WWW_SECRET_KEY_FILE", ""), "file which contains the secret key")
 	flag.StringVar(&spaFile, "spaFile", defaultEnvString("S3WWW_SPA_FILE", ""), "if working with SPA (Single Page Application), use this key the set the absolute path of the file to call whenever a file dosen't exist")
+	flag.StringVar(&allowedCorsOrigin, "allowed-cors-origins", defaultEnvString("S3WWW_ALLOWED_CORS_ORIGINS", ""), "a list of origins a cross-domain request can be executed from")
 }
 
 func defaultEnvString(key string, defaultVal string) string {
@@ -255,14 +259,43 @@ func main() {
 	}
 
 	mux := http.FileServer(&S3{client, bucket, bucketPath})
+
+	// Wrap the existing mux with the CORS middleware.
+	opts := cors.Options{
+		AllowOriginFunc: func(origin string) bool {
+			if allowedCorsOrigin == "" {
+				return true
+			}
+			for _, allowedOrigin := range strings.Split(allowedCorsOrigin, ",") {
+				if wildcard.Match(allowedOrigin, origin) {
+					return true
+				}
+			}
+			return false
+		},
+		AllowedMethods: []string{
+			http.MethodGet,
+			http.MethodPut,
+			http.MethodHead,
+			http.MethodPost,
+			http.MethodDelete,
+			http.MethodOptions,
+			http.MethodPatch,
+		},
+		AllowedHeaders:   []string{"*"},
+		ExposedHeaders:   []string{"*"},
+		AllowCredentials: true,
+	}
+	muxHandler := cors.New(opts).Handler(mux)
+	
 	if letsEncrypt {
 		log.Printf("Started listening on https://%s\n", address)
-		certmagic.HTTPS([]string{address}, mux)
+		certmagic.HTTPS([]string{address}, muxHandler)
 	} else if tlsCert != "" && tlsKey != "" {
 		log.Printf("Started listening on https://%s\n", address)
-		log.Fatalln(http.ListenAndServeTLS(address, tlsCert, tlsKey, mux))
+		log.Fatalln(http.ListenAndServeTLS(address, tlsCert, tlsKey, muxHandler))
 	} else {
 		log.Printf("Started listening on http://%s\n", address)
-		log.Fatalln(http.ListenAndServe(address, mux))
+		log.Fatalln(http.ListenAndServe(address, muxHandler))
 	}
 }

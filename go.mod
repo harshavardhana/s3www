@@ -3,8 +3,10 @@ module github.com/harshavardhana/s3www
 go 1.21
 
 require (
+	github.com/IGLOU-EU/go-wildcard/v2 v2.0.2
 	github.com/caddyserver/certmagic v0.19.2
 	github.com/minio/minio-go/v7 v7.0.64
+	github.com/rs/cors v1.10.0
 )
 
 require (
