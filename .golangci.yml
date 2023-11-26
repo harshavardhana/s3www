@@ -1,39 +1,33 @@
-# Copyright 2021 Harshavardhana
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 linters-settings:
-  golint:
-    min-confidence: 0
+  gofumpt:
+    simplify: true
 
   misspell:
     locale: US
 
+  staticcheck:
+    checks: ['all', '-ST1005', '-ST1000', '-SA4000', '-SA9004', '-SA1019', '-SA1008', '-U1000', '-ST1016']
+
 linters:
   disable-all: true
   enable:
-    - typecheck
+    - durationcheck
+    - gocritic
+    - gofumpt
     - goimports
-    - misspell
+    - gomodguard
     - govet
-    - revive
     - ineffassign
-    - deadcode
+    - misspell
+    - revive
+    - staticcheck
+    - tenv
+    - typecheck
+    - unconvert
+    - unused
 
 issues:
   exclude-use-default: false
   exclude:
-      - should have a package comment
-      - error strings should not be capitalized or end with punctuation or a newline
-service:
-  golangci-lint-version: 1.20.0 # use the fixed version to not introduce new linters unexpectedly
+    - should have a package comment
+    - error strings should not be capitalized or end with punctuation or a newline
