@@ -18,11 +18,10 @@ project_name: s3www
 
 before:
   hooks:
-    - go mod tidy -compat=1.17
+    - go mod tidy -compat=1.21
+    
 builds:
   -
-    flags:
-      - -trimpath
     goos:
       - darwin
       - linux
@@ -34,6 +33,11 @@ builds:
       - s390x
     env:
       - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - "-s -w -X main.version={{.Version}}"
+      
 archives:
   -
     format_overrides:

@@ -17,6 +17,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -34,6 +35,10 @@ import (
 	"github.com/minio/minio-go/v7/pkg/s3utils"
 	"github.com/rs/cors"
 )
+
+// Use e.g.: go build -ldflags "-X main.version=v1.0.0"
+// to set the binary version.
+var version = "0.0.0-dev"
 
 // S3 - A S3 implements FileSystem using the minio client
 // allowing access to your S3 buckets and objects.
@@ -134,9 +139,11 @@ var (
 	spaFile           string
 	allowedCorsOrigin string
 	letsEncrypt       bool
+	versionF          = flag.Bool("version", false, "print version")
 )
 
 func init() {
+	flag.BoolVar(versionF, "v", false, "print version")
 	flag.StringVar(&endpoint, "endpoint", defaultEnvString("S3WWW_ENDPOINT", ""), "AWS S3 compatible server endpoint")
 	flag.StringVar(&bucket, "bucket", defaultEnvString("S3WWW_BUCKET", ""), "bucket name with static files")
 	flag.StringVar(&bucketPath, "bucketPath", defaultEnvString("S3WWW_BUCKET_PATH", "/"), "bucket path to serve static files from")
@@ -192,6 +199,11 @@ func NewCustomHTTPTransport() *http.Transport {
 
 func main() {
 	flag.Parse()
+
+	if *versionF {
+		fmt.Println("s3www -", version)
+		os.Exit(0)
+	}
 
 	if strings.TrimSpace(bucket) == "" {
 		log.Fatalln(`Bucket name cannot be empty, please provide 's3www -bucket "mybucket"'`)
