@@ -42,7 +42,7 @@ func (o objectInfo) Mode() os.FileMode {
 	if o.isDir {
 		return os.ModeDir
 	}
-	return os.FileMode(0644)
+	return os.FileMode(0o644)
 }
 
 func (o objectInfo) ModTime() time.Time {

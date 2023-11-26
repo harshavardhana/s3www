@@ -27,11 +27,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/IGLOU-EU/go-wildcard/v2"
 	"github.com/caddyserver/certmagic"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio-go/v7/pkg/s3utils"
-	"github.com/IGLOU-EU/go-wildcard/v2"
 	"github.com/rs/cors"
 )
 
@@ -121,19 +121,19 @@ func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) 
 }
 
 var (
-	endpoint            string
-	accessKey           string
-	accessKeyFile       string
-	secretKey           string
-	secretKeyFile       string
-	address             string
-	bucket              string
-	bucketPath          string
-	tlsCert             string
-	tlsKey              string
-	spaFile             string
-	allowedCorsOrigin   string
-	letsEncrypt         bool
+	endpoint          string
+	accessKey         string
+	accessKeyFile     string
+	secretKey         string
+	secretKeyFile     string
+	address           string
+	bucket            string
+	bucketPath        string
+	tlsCert           string
+	tlsKey            string
+	spaFile           string
+	allowedCorsOrigin string
+	letsEncrypt       bool
 )
 
 func init() {
@@ -208,7 +208,7 @@ func main() {
 	//  - IAM profile based credentials. (performs an HTTP
 	//    call to a pre-defined endpoint, only valid inside
 	//    configured ec2 instances)
-	var defaultAWSCredProviders = []credentials.Provider{
+	defaultAWSCredProviders := []credentials.Provider{
 		&credentials.EnvAWS{},
 		&credentials.FileAWSCredentials{},
 		&credentials.IAM{
@@ -287,14 +287,15 @@ func main() {
 		AllowCredentials: true,
 	}
 	muxHandler := cors.New(opts).Handler(mux)
-	
-	if letsEncrypt {
+
+	switch {
+	case letsEncrypt:
 		log.Printf("Started listening on https://%s\n", address)
 		certmagic.HTTPS([]string{address}, muxHandler)
-	} else if tlsCert != "" && tlsKey != "" {
+	case tlsCert != "" && tlsKey != "":
 		log.Printf("Started listening on https://%s\n", address)
 		log.Fatalln(http.ListenAndServeTLS(address, tlsCert, tlsKey, muxHandler))
-	} else {
+	default:
 		log.Printf("Started listening on http://%s\n", address)
 		log.Fatalln(http.ListenAndServe(address, muxHandler))
 	}
