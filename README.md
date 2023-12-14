@@ -41,6 +41,30 @@ podman run --rm -p 8080:8080 y4m4/s3www:latest \
 
 s3www: Started listening on http://0.0.0.0:8080
 ```
+or set with this environment vars:
+- S3WWW_ENDPOINT
+- S3WWW_BUCKET
+- S3WWW_BUCKET_PATH
+- S3WWW_ACCESS_KEY
+- S3WWW_SECRET_KEY
+- S3WWW_ADDRESS
+- S3WWW_LETS_ENCRYPT
+- S3WWW_SSL_CERT
+- S3WWW_SSL_KEY
+- S3WWW_ACCESS_KEY_FILE
+- S3WWW_SECRET_KEY_FILE
+- S3WWW_SPA_FILE
+- S3WWW_ALLOWED_CORS_ORIGINS
+
+
+```
+podman run --rm -p 8080:8080 -e S3WWW_BUCKET="mySite" -e S3WWW_ENDPOINT="https://s3.amazonaws.com" y4m4/s3www:latest \
+	  -accessKey "accessKey" \
+	  -secretKey "secretKey" \
+	  -address "0.0.0.0:8080"
+
+s3www: Started listening on http://0.0.0.0:8080
+```
 
 Point your web browser to http://127.0.0.1:8080 ensure your `s3www` is serving your `index.html` successfully.
 
@@ -63,18 +87,18 @@ s3www requires access to view and list all files in the bucket.
 
 ```
 {
-	"Version": "2012-10-17",
+	"Version": "2012-10-17
 	"Statement": [
 		{
-			"Sid": "",
-			"Effect": "Allow",
-			"Action": "s3:GetObject",
+			"Sid": "
+			"Effect": "Allow
+			"Action": "s3:GetObject
 			"Resource": "arn:aws:s3:::<Bucket Name>/*"
 		},
 		{
-			"Sid": "",
-			"Effect": "Allow",
-			"Action": "s3:ListBucket",
+			"Sid": "
+			"Effect": "Allow
+			"Action": "s3:ListBucket
 			"Resource": "arn:aws:s3:::<Bucket Name>"
 		}
 	]
