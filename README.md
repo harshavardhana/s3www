@@ -90,15 +90,15 @@ s3www requires access to view and list all files in the bucket.
 	"Version": "2012-10-17
 	"Statement": [
 		{
-			"Sid": "
-			"Effect": "Allow
-			"Action": "s3:GetObject
+			"Sid": "",
+			"Effect": "Allow",
+			"Action": "s3:GetObject",
 			"Resource": "arn:aws:s3:::<Bucket Name>/*"
 		},
 		{
-			"Sid": "
-			"Effect": "Allow
-			"Action": "s3:ListBucket
+			"Sid": "",
+			"Effect": "Allow",
+			"Action": "s3:ListBucket",
 			"Resource": "arn:aws:s3:::<Bucket Name>"
 		}
 	]
