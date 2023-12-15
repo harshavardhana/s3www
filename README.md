@@ -87,7 +87,7 @@ s3www requires access to view and list all files in the bucket.
 
 ```
 {
-	"Version": "2012-10-17
+	"Version": "2012-10-17",
 	"Statement": [
 		{
 			"Sid": "",
