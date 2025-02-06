@@ -12,21 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.21
+FROM golang:1.22.0 AS builder
+
+WORKDIR /app
 
 RUN \
-    mkdir -p /licenses && \
-    curl -s -q https://raw.githubusercontent.com/harshavardhana/s3www/master/CREDITS -o /licenses/CREDITS && \
-    curl -s -q https://raw.githubusercontent.com/harshavardhana/s3www/master/LICENSE -o /licenses/LICENSE
+    mkdir -p /app/licenses && \
+    curl -s -q https://raw.githubusercontent.com/harshavardhana/s3www/master/CREDITS -o /app/licenses/CREDITS && \
+    curl -s -q https://raw.githubusercontent.com/harshavardhana/s3www/master/LICENSE -o /app/licenses/LICENSE
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o s3www .
 
 FROM scratch
 
 EXPOSE 8080
 
 # Copy CA certificates to prevent x509: certificate signed by unknown authority errors
-COPY --from=0 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-COPY --from=0 /licenses /licenses
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
-COPY s3www /s3www
+COPY --from=builder /app/licenses /licenses
+
+COPY --from=builder /app/s3www /s3www
 
 ENTRYPOINT ["/s3www"]
