@@ -77,7 +77,7 @@ func (s3 *S3) Open(name string) (http.File, error) {
 			client: s3.Client,
 			object: nil,
 			isDir:  true,
-			bucket: bucket,
+			bucket: s3.bucket,
 			prefix: strings.TrimSuffix(name, pathSeparator),
 		}, nil
 	}
@@ -92,7 +92,7 @@ func (s3 *S3) Open(name string) (http.File, error) {
 		client: s3.Client,
 		object: obj,
 		isDir:  false,
-		bucket: bucket,
+		bucket: s3.bucket,
 		prefix: name,
 	}, nil
 }
@@ -102,7 +102,7 @@ func getObject(ctx context.Context, s3 *S3, name string) (*minio.Object, error) 
 	if spaFile != "" {
 		names = append(names, spaFile)
 	}
-	names = append(names, "/404.html")
+	names = append(names, "404.html")
 	for _, n := range names {
 		obj, err := s3.GetObject(ctx, s3.bucket, n, minio.GetObjectOptions{})
 		if err != nil {

@@ -38,7 +38,10 @@ type httpMinioObject struct {
 }
 
 func (h *httpMinioObject) Close() error {
-	return h.object.Close()
+	if h.object != nil {
+		return h.object.Close()
+	}
+	return nil
 }
 
 func (h *httpMinioObject) Read(p []byte) (n int, err error) {
