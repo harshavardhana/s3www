@@ -79,7 +79,7 @@ func (h *httpMinioObject) Readdir(count int) ([]os.FileInfo, error) {
 	for _, objInfo := range objsInfo {
 		if strings.HasSuffix(objInfo.Key, pathSeparator) {
 			fileInfos = append(fileInfos, objectInfo{
-				ObjectInfo: minio.ObjectInfo{
+				oi: minio.ObjectInfo{
 					Key:          strings.TrimSuffix(objInfo.Key, pathSeparator),
 					LastModified: objInfo.LastModified,
 				},
@@ -89,7 +89,7 @@ func (h *httpMinioObject) Readdir(count int) ([]os.FileInfo, error) {
 			continue
 		}
 		fileInfos = append(fileInfos, objectInfo{
-			ObjectInfo: objInfo,
+			oi: objInfo,
 		})
 	}
 	return fileInfos, nil
@@ -98,7 +98,7 @@ func (h *httpMinioObject) Readdir(count int) ([]os.FileInfo, error) {
 func (h *httpMinioObject) Stat() (os.FileInfo, error) {
 	if h.isDir {
 		return objectInfo{
-			ObjectInfo: minio.ObjectInfo{
+			oi: minio.ObjectInfo{
 				Key:          h.prefix,
 				LastModified: time.Now().UTC(),
 			},
@@ -113,6 +113,6 @@ func (h *httpMinioObject) Stat() (os.FileInfo, error) {
 	}
 
 	return objectInfo{
-		ObjectInfo: objInfo,
+		oi: objInfo,
 	}, nil
 }

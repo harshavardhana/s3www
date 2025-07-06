@@ -69,6 +69,8 @@ dockers:
 - image_templates:
   - "y4m4/s3www:{{ .Tag }}-amd64"
   use: buildx
+  goos: linux
+  goarch: amd64
   dockerfile: Dockerfile
   extra_files:
     - LICENSE
@@ -79,6 +81,8 @@ dockers:
 - image_templates:
   - "y4m4/s3www:{{ .Tag }}-ppc64le"
   use: buildx
+  goos: linux
+  goarch: ppc64le
   dockerfile: Dockerfile
   extra_files:
     - LICENSE
@@ -89,6 +93,8 @@ dockers:
 - image_templates:
   - "y4m4/s3www:{{ .Tag }}-s390x"
   use: buildx
+  goos: linux
+  goarch: s390x
   dockerfile: Dockerfile
   extra_files:
     - LICENSE
@@ -99,6 +105,8 @@ dockers:
 - image_templates:
   - "y4m4/s3www:{{ .Tag }}-arm64"
   use: buildx
+  goos: linux
+  goarch: arm64
   dockerfile: Dockerfile
   extra_files:
     - LICENSE
