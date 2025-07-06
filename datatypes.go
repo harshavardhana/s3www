@@ -25,17 +25,17 @@ import (
 // objectInfo implements os.FileInfo interface,
 // is returned during Readdir(), Stat() operations.
 type objectInfo struct {
-	minio.ObjectInfo
+	oi     minio.ObjectInfo
 	prefix string
 	isDir  bool
 }
 
 func (o objectInfo) Name() string {
-	return o.ObjectInfo.Key
+	return o.oi.Key
 }
 
 func (o objectInfo) Size() int64 {
-	return o.ObjectInfo.Size
+	return o.oi.Size
 }
 
 func (o objectInfo) Mode() os.FileMode {
@@ -46,7 +46,7 @@ func (o objectInfo) Mode() os.FileMode {
 }
 
 func (o objectInfo) ModTime() time.Time {
-	return o.ObjectInfo.LastModified
+	return o.oi.LastModified
 }
 
 func (o objectInfo) IsDir() bool {
