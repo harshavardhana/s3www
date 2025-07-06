@@ -1,3 +1,5 @@
+![s3www logo](s3www.png)
+
 # s3www: Serve Static Files from S3-Compatible Storage
 
 s3www is a lightweight, open-source tool to serve static files from any S3-compatible object storage service, such as AWS S3, MinIO, or DigitalOcean Spaces. It supports HTTPS with Let's Encrypt for secure hosting and is ideal for hosting static websites, single-page applications (SPAs), or file servers.
