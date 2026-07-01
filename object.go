@@ -55,7 +55,7 @@ func (h *httpMinioObject) Seek(offset int64, whence int) (int64, error) {
 func (h *httpMinioObject) Readdir(count int) ([]os.FileInfo, error) {
 	// List 'N' number of objects from a bucket-name with a matching prefix.
 	listObjectsN := func(bucket, prefix string, count int) (objsInfo []minio.ObjectInfo, err error) {
-		i := 1
+		i := 0
 		for object := range h.client.ListObjects(context.Background(), bucket, minio.ListObjectsOptions{
 			Prefix:    prefix,
 			Recursive: false,
@@ -63,12 +63,12 @@ func (h *httpMinioObject) Readdir(count int) ([]os.FileInfo, error) {
 			if object.Err != nil {
 				return nil, object.Err
 			}
+			objsInfo = append(objsInfo, object)
 			i++
 			// Verify if we have printed N objects.
-			if i == count {
+			if i >= count && count > 0 {
 				return
 			}
-			objsInfo = append(objsInfo, object)
 		}
 		return objsInfo, nil
 	}
